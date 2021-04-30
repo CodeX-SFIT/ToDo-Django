@@ -79,5 +79,5 @@ class TodoDelete(APIView):
             return JsonResponse({"success": False, "error":"TodoItem does NOT exist."}, status = 404)
 
         todoItem.delete()
-        return JsonResponse({"success": True, "error":"TodoItem Deleted."}, status = 200)
+        return JsonResponse({"success": True, "data":"TodoItem Deleted."}, status = 200)
         
