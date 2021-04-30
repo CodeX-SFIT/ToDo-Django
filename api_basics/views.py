@@ -10,7 +10,13 @@ from .serializers import RegisterSerializer, LoginSerializer, TodoSerializer
 
 from .models import TodoItem
 
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
+
 # Create your views here.
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
 class SignUp(APIView):
     permission_classes = (permissions.AllowAny,)
 
@@ -49,6 +55,9 @@ class Login(APIView):
             return JsonResponse({"success": False, "error": "Something Went Wrong!"}, status=500)
 
 class Logout(APIView):
+
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
     def post(self, request):
         try:
             auth.logout(request)
@@ -57,6 +66,9 @@ class Logout(APIView):
             return JsonResponse({"success": False, "error": "Logout Unsuccessfull"}, status=400)
 
 class TodoList(APIView):
+
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
     def post(self, request):
         data = request.data
         data['created_by'] = request.user.id
@@ -72,6 +84,9 @@ class TodoList(APIView):
         return JsonResponse({"success": True, "data": serializer.data}, status = 200)
 
 class TodoDelete(APIView):
+
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
     def delete(self, request, id):
         try:
             todoItem = TodoItem.objects.get(id = id)
